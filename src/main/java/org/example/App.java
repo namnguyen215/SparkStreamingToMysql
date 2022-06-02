@@ -71,6 +71,8 @@ public class App
                                     .groupBy(col("Day"), col("bannerId"))
                                     .agg(hll_merge("guid_hll")
                                             .as("guid_hll"))
+                                    .select(col("Day"), col("bannerId"),
+                                            hll_cardinality("guid_hll").as("guid_hll"))
                                     .write()
                                     .format("jdbc")
                                     .option("driver", "com.mysql.cj.jdbc.Driver")
