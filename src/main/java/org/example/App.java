@@ -77,7 +77,7 @@ public class App
                                     .option("url", "jdbc:mysql://localhost:3306/mydata")
                                     .option("dbtable", "logs")
                                     .option("user", "root")
-                                    .option("password", "12345678")
+                                    .option("password", "password")
                                     .mode("append")
                                     .save()
                     )
