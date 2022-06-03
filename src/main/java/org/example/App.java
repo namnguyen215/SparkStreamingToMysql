@@ -60,30 +60,33 @@ public class App
                                 .when(col("Hour").lt("06:00:00"), date_sub(col("Date"), 1)))
                 .drop(col("Date"))
                 .drop("Hour");
-        Dataset<Row> prevDF = spark.read()
-                .format("jdbc")
-                .option("driver", "com.mysql.cj.jdbc.Driver")
-                .option("url", "jdbc:mysql://localhost:3306/Intern2022")
-                .option("dbtable", "mydata")
-                .option("user", "namnp")
-                .option("password", "12345678")
-                .load();
+        value=value.groupBy(col("Day"), col("bannerId"))
+                .agg(hll_init_agg("guid")
+                        .as("guid_hll"));
+//        Dataset<Row> prevDF = spark.read()
+//                .format("jdbc")
+//                .option("driver", "com.mysql.cj.jdbc.Driver")
+//                .option("url", "jdbc:mysql://localhost:3306/Intern2022")
+//                .option("dbtable", "mydata")
+//                .option("user", "namnp")
+//                .option("password", "12345678")
+//                .load();
         try {
             value.coalesce(1).writeStream()
                     .trigger(Trigger.ProcessingTime("1 minute"))
                     .outputMode("append")
                     .foreachBatch((VoidFunction2<Dataset<Row>, Long>) (batchDF, batchId) ->
                             batchDF
-                                    .groupBy(col("Day"), col("bannerId"))
-                                    .agg(hll_init_agg("guid")
-                                            .as("guid_hll"))
+//                                    .groupBy(col("Day"), col("bannerId"))
+//                                    .agg(hll_init_agg("guid")
+//                                            .as("guid_hll"))
                                     .groupBy(col("Day"), col("bannerId"))
                                     .agg(hll_merge("guid_hll")
                                             .as("guid_hll"))
-                                    .select(col("Day"), col("bannerId"),
-                                            hll_cardinality("guid_hll").as("guid_hll"))
-                                    .union(prevDF)
-                                    .groupBy(col("Day"), col("bannerId")).agg(sum("guid_hll").as("guid_hll"))
+//                                    .select(col("Day"), col("bannerId"),
+//                                            hll_cardinality("guid_hll").as("guid_hll"))
+//                                    .union(prevDF)
+//                                    .groupBy(col("Day"), col("bannerId")).agg(sum("guid_hll").as("guid_hll"))
                                     .write()
                                     .format("jdbc")
                                     .option("driver", "com.mysql.cj.jdbc.Driver")
