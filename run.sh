@@ -1,1 +1,1 @@
-spark-submit --class org.example.App --deploy-mode client --num-executors 3 --executor-cores 2  --executor-memory 2G target/SparkStreamingToMysql-1.0-SNAPSHOT-jar-with-dependencies.jar
+spark-submit --class org.example.App --deploy-mode client --num-executors 2 --executor-cores 2  --executor-memory 2G target/SparkStreamingToMysql-1.0-SNAPSHOT-jar-with-dependencies.jar

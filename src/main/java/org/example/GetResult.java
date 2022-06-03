@@ -29,9 +29,6 @@ public class GetResult {
                 .option("password", "12345678")
                 .load();
         Dataset<Row> res = df.filter(col("Day").$eq$eq$eq(date));
-//        res = res.groupBy(col("bannerId"))
-//                .agg(hll_merge("guid_hll"));        res = res.groupBy(col("bannerId"))
-//                .agg(hll_merge("guid_hll"));
         res.select(col("bannerId"),
                         hll_cardinality("guid_hll").as("Number of guids"))
                 .show(false);

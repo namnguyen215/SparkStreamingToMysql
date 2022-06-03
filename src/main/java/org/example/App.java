@@ -74,7 +74,7 @@ public class App
 
         try {
             value.coalesce(1).writeStream()
-                    .trigger(Trigger.ProcessingTime("1 minute"))
+                    .trigger(Trigger.ProcessingTime("30 minutes"))
                     .outputMode("append")
                     .foreachBatch((VoidFunction2<Dataset<Row>, Long>) (batchDF, batchId) ->
                             batchDF
@@ -89,13 +89,14 @@ public class App
 //                                            hll_cardinality("guid_hll").as("guid_hll"))
 //                                    .groupBy(col("Day"), col("bannerId")).agg(sum("guid_hll").as("guid_hll"))
                                     .write()
+                                    .option("truncate", "true")
                                     .format("jdbc")
                                     .option("driver", "com.mysql.cj.jdbc.Driver")
                                     .option("url", "jdbc:mysql://localhost:3306/Intern2022")
                                     .option("dbtable", "mydata")
                                     .option("user", "namnp")
                                     .option("password", "12345678")
-                                    .mode("overwrite")
+                                    .mode("append")
                                     .save()
                     )
                     .start().awaitTermination();
