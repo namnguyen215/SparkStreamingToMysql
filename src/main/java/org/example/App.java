@@ -10,6 +10,7 @@ import org.apache.spark.sql.streaming.Trigger;
 import java.util.concurrent.TimeoutException;
 import static org.apache.spark.sql.functions.col;
 import static org.apache.spark.sql.functions.split;
+import static org.apache.spark.sql.functions.sum;
 import static org.apache.spark.sql.functions.when;
 import static org.apache.spark.sql.functions.date_sub;
 import static com.swoop.alchemy.spark.expressions.hll.functions.*;
@@ -59,11 +60,19 @@ public class App
                                 .when(col("Hour").lt("06:00:00"), date_sub(col("Date"), 1)))
                 .drop(col("Date"))
                 .drop("Hour");
-
+        Dataset<Row> prevDF = spark.read()
+                .format("jdbc")
+                .option("url", "jdbc:mysql://localhost:3306/Intern2022")
+                .option("dbtable", "mydata")
+                .option("user", "namnp")
+                .option("password", "12345678")
+                .load();
+        Dataset<Row> res=prevDF.union(value);
+        res=res.groupBy(col("Day"), col("bannerId")).agg(sum("guid_hll").as("guid_hll"));
         try {
-            value.coalesce(1).writeStream()
-                    .trigger(Trigger.ProcessingTime("1 minutes"))
-                    .outputMode("append")
+            res.coalesce(1).writeStream()
+                    .trigger(Trigger.ProcessingTime("5 minutes"))
+                    .outputMode("overwrite")
                     .foreachBatch((VoidFunction2<Dataset<Row>, Long>) (batchDF, batchId) ->
                             batchDF.groupBy(col("Day"), col("bannerId"))
                                     .agg(hll_init_agg("guid")
