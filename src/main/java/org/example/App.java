@@ -71,10 +71,11 @@ public class App
                 .option("user", "namnp")
                 .option("password", "12345678")
                 .load();
+
         try {
             value.coalesce(1).writeStream()
                     .trigger(Trigger.ProcessingTime("1 minute"))
-//                    .outputMode("append")
+                    .outputMode("append")
                     .foreachBatch((VoidFunction2<Dataset<Row>, Long>) (batchDF, batchId) ->
                             batchDF
                                     .groupBy(col("Day"), col("bannerId"))
