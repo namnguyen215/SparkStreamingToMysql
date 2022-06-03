@@ -74,7 +74,7 @@ public class App
         try {
             value.coalesce(1).writeStream()
                     .trigger(Trigger.ProcessingTime("1 minute"))
-                    .outputMode("complete")
+//                    .outputMode("complete")
                     .foreachBatch((VoidFunction2<Dataset<Row>, Long>) (batchDF, batchId) ->
                             batchDF
                                     .groupBy(col("Day"), col("bannerId"))
