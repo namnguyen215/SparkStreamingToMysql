@@ -74,19 +74,19 @@ public class App
         try {
             value.coalesce(1).writeStream()
                     .trigger(Trigger.ProcessingTime("1 minute"))
-//                    .outputMode("complete")
+//                    .outputMode("append")
                     .foreachBatch((VoidFunction2<Dataset<Row>, Long>) (batchDF, batchId) ->
                             batchDF
                                     .groupBy(col("Day"), col("bannerId"))
                                     .agg(hll_init_agg("guid")
                                             .as("guid_hll"))
+                                    .union(prevDF)
                                     .groupBy(col("Day"), col("bannerId"))
                                     .agg(hll_merge("guid_hll")
                                             .as("guid_hll"))
-                                    .select(col("Day"), col("bannerId"),
-                                            hll_cardinality("guid_hll").as("guid_hll"))
-                                    .union(prevDF)
-                                    .groupBy(col("Day"), col("bannerId")).agg(sum("guid_hll").as("guid_hll"))
+//                                    .select(col("Day"), col("bannerId"),
+//                                            hll_cardinality("guid_hll").as("guid_hll"))
+//                                    .groupBy(col("Day"), col("bannerId")).agg(sum("guid_hll").as("guid_hll"))
                                     .write()
                                     .format("jdbc")
                                     .option("driver", "com.mysql.cj.jdbc.Driver")
