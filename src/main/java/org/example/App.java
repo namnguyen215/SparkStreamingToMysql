@@ -62,6 +62,7 @@ public class App
                 .drop("Hour");
         Dataset<Row> prevDF = spark.read()
                 .format("jdbc")
+                .option("driver", "com.mysql.cj.jdbc.Driver")
                 .option("url", "jdbc:mysql://localhost:3306/Intern2022")
                 .option("dbtable", "mydata")
                 .option("user", "namnp")
@@ -71,17 +72,18 @@ public class App
         res=res.groupBy(col("Day"), col("bannerId")).agg(sum("guid_hll").as("guid_hll"));
         try {
             res.coalesce(1).writeStream()
-                    .trigger(Trigger.ProcessingTime("5 minutes"))
-                    .outputMode("overwrite")
+                    .trigger(Trigger.ProcessingTime("1 minute"))
+                    .outputMode("complete")
                     .foreachBatch((VoidFunction2<Dataset<Row>, Long>) (batchDF, batchId) ->
-                            batchDF.groupBy(col("Day"), col("bannerId"))
-                                    .agg(hll_init_agg("guid")
-                                            .as("guid_hll"))
-                                    .groupBy(col("Day"), col("bannerId"))
-                                    .agg(hll_merge("guid_hll")
-                                            .as("guid_hll"))
-                                    .select(col("Day"), col("bannerId"),
-                                            hll_cardinality("guid_hll").as("guid_hll"))
+                            batchDF
+//                                    .groupBy(col("Day"), col("bannerId"))
+//                                    .agg(hll_init_agg("guid")
+//                                            .as("guid_hll"))
+//                                    .groupBy(col("Day"), col("bannerId"))
+//                                    .agg(hll_merge("guid_hll")
+//                                            .as("guid_hll"))
+//                                    .select(col("Day"), col("bannerId"),
+//                                            hll_cardinality("guid_hll").as("guid_hll"))
                                     .write()
                                     .format("jdbc")
                                     .option("driver", "com.mysql.cj.jdbc.Driver")
