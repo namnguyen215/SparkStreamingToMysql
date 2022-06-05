@@ -23,7 +23,7 @@ public class App
     public static void main(final String[] args) {
         SparkSession spark = SparkSession
                 .builder()
-                .master("local")
+                .master("yarn")
                 .getOrCreate();
         spark.sparkContext().setLogLevel("ERROR");
         Dataset<Row> df = spark
