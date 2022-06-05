@@ -65,7 +65,7 @@ public class App
         Dataset<Row> prevDF = spark.read()
                 .format("jdbc")
                 .option("driver", "com.mysql.cj.jdbc.Driver")
-                .option("url", "jdbc:mysql://localhost:3306/Intern2022")
+                .option("url", "jdbc:mysql://localhost:3307/Intern2022")
                 .option("dbtable", "mydata")
                 .option("user", "namnp")
                 .option("password", "12345678")
