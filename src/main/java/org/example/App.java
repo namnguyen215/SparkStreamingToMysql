@@ -10,7 +10,6 @@ import org.apache.spark.sql.streaming.Trigger;
 import java.util.concurrent.TimeoutException;
 import static org.apache.spark.sql.functions.col;
 import static org.apache.spark.sql.functions.split;
-import static org.apache.spark.sql.functions.sum;
 import static org.apache.spark.sql.functions.when;
 import static org.apache.spark.sql.functions.date_sub;
 import static com.swoop.alchemy.spark.expressions.hll.functions.*;
