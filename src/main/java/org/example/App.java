@@ -95,7 +95,7 @@ public class App
                                     .option("dbtable", "mydata")
                                     .option("user", "namnp")
                                     .option("password", "12345678")
-                                    .mode("append")
+                                    .mode("overwrite")
                                     .save()
                     )
                     .start().awaitTermination();

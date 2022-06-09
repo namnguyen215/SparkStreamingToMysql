@@ -9,7 +9,7 @@ import static org.apache.spark.sql.functions.col;
 public class GetResult {
 
     private static  String hdfsPath = "hdfs://internship-hadoop105185:8120/mydata/";
-    private static String date = "2022-06-03";
+    private static String date = "2022-06-08";
     private static String path = hdfsPath + "Day=" + date + "/*";
     /*
      *Ham main
@@ -23,7 +23,7 @@ public class GetResult {
         Dataset<Row> df = spark.read()
                 .format("jdbc")
                 .option("driver", "com.mysql.cj.jdbc.Driver")
-                .option("url", "jdbc:mysql://localhost:3306/Intern2022")
+                .option("url", "jdbc:mysql://10.3.105.185:3307/Intern2022")
                 .option("dbtable", "mydata")
                 .option("user", "namnp")
                 .option("password", "12345678")
